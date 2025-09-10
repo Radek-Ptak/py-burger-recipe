@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class Validator(ABC):
-    def __set_name__(self, over: type, name: str) -> None:
+    def __set_name__(self, owner: type, name: str) -> None:
         self.protected_name = "_" + name
 
     def __get__(self, instance: object, owner: type) -> object:
@@ -26,7 +26,7 @@ class Number(Validator):
         self.max_value = max_value
 
     def validate(self, value: int) -> None:
-        if not isinstance(value, int):
+        if type(value) is not int:
             raise TypeError("Quantity should be integer.")
         if not (self.min_value <= value <= self.max_value):
             raise ValueError(
@@ -37,7 +37,7 @@ class Number(Validator):
 
 class OneOf(Validator):
     def __init__(self, options: str) -> None:
-        self.options = options
+        self.options = tuple(options)
 
     def validate(self, value: str) -> None:
         if value not in self.options:
